@@ -8,48 +8,6 @@ from rembg import remove
 app = Flask(__name__)
 
 
-# def ai_crop_image(file):
-#     global cropped
-#     image = cv2.imread(file)
-#     face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
-#     faces = face_cascade.detectMultiScale(image, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
-#
-#     # print fase count
-#     print(f'Found {len(faces)} face(s)')
-#     if len(faces) == 0:
-#         print("Face not found")
-#         exit()
-#     threshold = image.shape[1] // 2
-#
-#     for i, (x, y, w, h) in enumerate(faces):
-#         if x > threshold:
-#             cropped = image[y - 130:y + h + 130, x - 130:x + w + 0]
-#             cv2.imwrite(f'./output/{file_name}', cropped)
-#             print("o'ng")
-#         elif x + w < threshold:
-#             cropped = image[y - 130:y + h + 130, x - 0:x + w + 130]
-#             cv2.imwrite(f'./output/{file_name}', cropped)
-#             print("chap")
-#         else:
-#             cropped = image[y - 130:y + h + 130, x - 130:x + w + 130]
-#             cv2.imwrite(f'./output/{file_name}', cropped)
-#             print("o'rtada")
-#
-#     cv2.destroyAllWindows()
-#
-#     return cropped
-#
-#
-# def remove_background(file):
-#     with open(file, 'rb') as img_file:
-#         output_file = remove(img_file.read())
-#         bg_removed_filename = str(uuid.uuid4()) + '.png'
-#         bg_removed_file_path = os.path.join('./output', bg_removed_filename)
-#         with open(bg_removed_file_path, 'wb') as f:
-#             f.write(output_file)
-#     return bg_removed_file_path
-
-
 @app.route('/upload', methods=['POST'])
 def upload():
     file_name = str(uuid.uuid4()) + '.jpg'
@@ -88,8 +46,6 @@ def upload():
     if len(faces) > 2:
         faces = sorted(faces, key=lambda x: x[2] * x[3], reverse=True)[:2]
 
-    # python person age detekt and print
-
     threshold = image.shape[1] // 2
 
     for i, (x, y, w, h) in enumerate(faces):
@@ -115,8 +71,6 @@ def upload():
             bg_removed_file_path = os.path.join('./output', bg_removed_filename)
             with open(bg_removed_file_path, 'wb') as f:
                 f.write(output_file)
-
-        # bg_removed_file_path image resize 600x600
 
         background_path = './fon/fon.png'
         Image.open(bg_removed_file_path).convert("RGBA").resize((600, 600)).save(bg_removed_file_path)
@@ -159,7 +113,11 @@ def upload():
             bg_removed_file_path = os.path.join('./output', bg_removed_filename)
             with open(bg_removed_file_path, 'wb') as f:
                 f.write(output_file)
-        return send_file(bg_removed_file_path, mimetype='image/png')
+        send = send_file(bg_removed_file_path, mimetype='image/png')
+        os.remove(bg_removed_file_path)
+        os.remove(os.path.join(images_directory, images.filename))
+        os.remove(f'./output/{file_name}')
+        return send
     else:
         return send_file(f'./output/{file_name}', mimetype='image/jpeg')
 
