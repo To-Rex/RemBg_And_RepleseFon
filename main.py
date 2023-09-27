@@ -5,8 +5,8 @@ from flask import Flask, request, send_file, jsonify
 from PIL import Image
 from rembg import remove
 
-app = Flask(__name__)
 
+app = Flask(__name__)
 
 @app.route('/upload', methods=['POST'])
 def upload():
