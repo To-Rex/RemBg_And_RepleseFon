@@ -126,10 +126,7 @@ def upload():
 def index():
     return "Hello World"
 
-
-def main():
-    app.run(host="0.0.0.0", port=2003, debug=True)
-
+#WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
 
 if __name__ == '__main__':
-    main()
+    app.run(host='0.0.0.0', port=2003, debug=True)
